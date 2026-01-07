@@ -1,0 +1,17 @@
+[Unit]
+Description=GNOME Screenshot DBus Bridge for Wayland
+Documentation=https://github.com/numbery/plasma-gnome-screenshot-bridge
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/plasma-gnome-screenshot-bridge -v
+Restart=on-failure
+RestartSec=5
+
+# Environment
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=graphical-session.target
