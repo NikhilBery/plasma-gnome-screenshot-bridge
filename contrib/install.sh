@@ -64,6 +64,34 @@ echo
 # Reload systemd
 systemctl --user daemon-reload
 
+# Create symlink for bridge binary if installed in venv
+echo "Setting up binary symlink..."
+mkdir -p ~/.local/bin
+if [ -f "$PROJECT_DIR/../.venv/bin/plasma-gnome-screenshot-bridge" ]; then
+    ln -sf "$PROJECT_DIR/../.venv/bin/plasma-gnome-screenshot-bridge" ~/.local/bin/
+elif command -v plasma-gnome-screenshot-bridge &> /dev/null; then
+    ln -sf "$(which plasma-gnome-screenshot-bridge)" ~/.local/bin/
+fi
+
+# Install Upwork wrapper (optional)
+if [ -f /opt/Upwork/upwork ]; then
+    echo "Upwork detected. Installing Wayland wrapper..."
+    cp "$SCRIPT_DIR/upwork-wayland.sh" ~/.local/bin/upwork-wayland
+    chmod +x ~/.local/bin/upwork-wayland
+
+    # Install desktop file override with full path
+    mkdir -p ~/.local/share/applications
+    sed "s|Exec=upwork-wayland|Exec=$HOME/.local/bin/upwork-wayland|" \
+        "$SCRIPT_DIR/upwork.desktop" > ~/.local/share/applications/upwork.desktop
+
+    # Rebuild desktop database
+    update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
+    kbuildsycoca6 2>/dev/null || true
+
+    echo "  ✓ Upwork wrapper installed"
+fi
+
+echo
 echo "=== Installation Complete ==="
 echo
 echo "To start the service now:"
@@ -77,3 +105,7 @@ echo "  systemctl --user status plasma-gnome-screenshot-bridge"
 echo
 echo "To run manually:"
 echo "  plasma-gnome-screenshot-bridge -v"
+echo
+if [ -f /opt/Upwork/upwork ]; then
+    echo "Upwork: Launch from application menu - it will use XWayland mode automatically."
+fi

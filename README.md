@@ -32,18 +32,37 @@ This bridge solves the problem by:
   - **wlroots (Sway/Hyprland)**: `grim`
   - **GNOME**: `gnome-screenshot`
 
-### Install from source
+### Quick Install (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/numbery/plasma-gnome-screenshot-bridge.git
 cd plasma-gnome-screenshot-bridge
 
-# Install with pip
-pip install --user .
+# Run the install script
+./contrib/install.sh
 
-# Or install in development mode
-pip install --user -e .
+# Enable and start the service
+systemctl --user enable --now plasma-gnome-screenshot-bridge
+```
+
+The install script will:
+- Install the Python package
+- Set up the systemd service
+- If Upwork is detected, install the XWayland wrapper
+
+### Manual Install
+
+```bash
+# Clone the repository
+git clone https://github.com/numbery/plasma-gnome-screenshot-bridge.git
+cd plasma-gnome-screenshot-bridge
+
+# Install with uv (recommended)
+uv pip install .
+
+# Or install with pip
+pip install --user .
 ```
 
 ### Install dependencies (Fedora)
@@ -259,15 +278,24 @@ Some applications (like Upwork) explicitly check for Wayland and refuse to work 
 For Upwork specifically, we provide a wrapper script that forces XWayland mode:
 
 ```bash
+# Run the install script (automatically detects and sets up Upwork)
+./contrib/install.sh
+```
+
+Or manually:
+```bash
 # Install the wrapper script
 cp contrib/upwork-wayland.sh ~/.local/bin/upwork-wayland
 chmod +x ~/.local/bin/upwork-wayland
 
-# Install the desktop file (for application menu)
-cp contrib/upwork-wayland.desktop ~/.local/share/applications/
+# Install the desktop file (override system file)
+mkdir -p ~/.local/share/applications
+sed "s|Exec=upwork-wayland|Exec=$HOME/.local/bin/upwork-wayland|" \
+    contrib/upwork.desktop > ~/.local/share/applications/upwork.desktop
 
 # Update desktop database
 update-desktop-database ~/.local/share/applications/
+kbuildsycoca6  # KDE only
 ```
 
 Now you can launch "Upwork" from your application menu, and it will automatically use XWayland mode with the screenshot bridge.
