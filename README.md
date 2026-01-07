@@ -36,7 +36,7 @@ This bridge solves the problem by:
 
 ```bash
 # Clone the repository
-git clone https://github.com/numbery/plasma-gnome-screenshot-bridge.git
+git clone https://github.com/NikhilBery/plasma-gnome-screenshot-bridge.git
 cd plasma-gnome-screenshot-bridge
 
 # Run the install script
@@ -55,7 +55,7 @@ The install script will:
 
 ```bash
 # Clone the repository
-git clone https://github.com/numbery/plasma-gnome-screenshot-bridge.git
+git clone https://github.com/NikhilBery/plasma-gnome-screenshot-bridge.git
 cd plasma-gnome-screenshot-bridge
 
 # Install with uv (recommended)

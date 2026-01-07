@@ -48,9 +48,9 @@ dev = [
 plasma-gnome-screenshot-bridge = "plasma_gnome_screenshot_bridge.bridge:main"
 
 [project.urls]
-Homepage = "https://github.com/numbery/plasma-gnome-screenshot-bridge"
-Repository = "https://github.com/numbery/plasma-gnome-screenshot-bridge"
-Issues = "https://github.com/numbery/plasma-gnome-screenshot-bridge/issues"
+Homepage = "https://github.com/NikhilBery/plasma-gnome-screenshot-bridge"
+Repository = "https://github.com/NikhilBery/plasma-gnome-screenshot-bridge"
+Issues = "https://github.com/NikhilBery/plasma-gnome-screenshot-bridge/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
