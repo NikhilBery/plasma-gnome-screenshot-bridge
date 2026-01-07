@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Upwork
+Comment=Upwork Desktop App (Wayland Compatible)
+GenericName=Time Tracker
+Exec=upwork-wayland
+Icon=upwork
+Type=Application
+StartupNotify=true
+Categories=Network;
+Keywords=upwork;freelance;time;tracker;

@@ -252,10 +252,34 @@ sudo pacman -S grim         # Arch
 
 ### Application still shows "Wayland not supported"
 
-Some applications explicitly check for Wayland and refuse to work. In those cases:
-1. Try setting `XDG_SESSION_TYPE=x11` before running the application
-2. Run the application under XWayland
-3. Contact the application developer to support Wayland properly
+Some applications (like Upwork) explicitly check for Wayland and refuse to work even with the bridge running. These apps need to be launched under XWayland mode.
+
+**Solution: Use the included wrapper scripts**
+
+For Upwork specifically, we provide a wrapper script that forces XWayland mode:
+
+```bash
+# Install the wrapper script
+cp contrib/upwork-wayland.sh ~/.local/bin/upwork-wayland
+chmod +x ~/.local/bin/upwork-wayland
+
+# Install the desktop file (for application menu)
+cp contrib/upwork-wayland.desktop ~/.local/share/applications/
+
+# Update desktop database
+update-desktop-database ~/.local/share/applications/
+```
+
+Now you can launch "Upwork" from your application menu, and it will automatically use XWayland mode with the screenshot bridge.
+
+**For other Electron apps**, create a similar wrapper:
+```bash
+#!/bin/bash
+export XDG_SESSION_TYPE=x11
+unset WAYLAND_DISPLAY
+export ELECTRON_OZONE_PLATFORM_HINT=x11
+exec /path/to/your/app "$@"
+```
 
 ## Credits
 
