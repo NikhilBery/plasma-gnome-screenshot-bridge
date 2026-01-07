@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "plasma-gnome-screenshot-bridge"
-version = "1.0.0"
+version = "1.1.0"
 description = "DBus bridge implementing GNOME Screenshot interface for KDE Plasma and other Wayland compositors"
 readme = "README.md"
 license = {text = "MIT"}

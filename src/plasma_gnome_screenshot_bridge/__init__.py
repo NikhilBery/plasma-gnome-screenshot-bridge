@@ -6,6 +6,6 @@ for KDE Plasma and other Wayland compositors, enabling legacy applications
 (like Upwork, time trackers, etc.) to capture screenshots on Wayland.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Community Contributors"
 __license__ = "MIT"

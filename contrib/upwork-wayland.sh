@@ -1,18 +1,27 @@
 #!/bin/bash
 # Upwork Wayland Wrapper
-# Launches Upwork on Wayland by forcing XWayland mode
+# Launches Upwork on native Wayland with patched screenshot support
 #
-# This script tricks Upwork into thinking it's running on X11,
-# allowing it to use the plasma-gnome-screenshot-bridge for screenshots.
+# This script runs Upwork on native Wayland but hides environment variables
+# so the JavaScript isWayland() check returns false. Combined with the
+# app.asar patch (see patch-upwork.sh), this enables working screenshots
+# using spectacle on KDE Plasma Wayland.
+#
+# Requirements:
+# - Upwork must be patched with patch-upwork.sh first
+# - spectacle must be installed (for KDE Plasma)
 
-# Force X11 session type so Upwork thinks it's on X11
+# Save wayland socket for Electron to connect
+WAYLAND_SOCK="$WAYLAND_DISPLAY"
+
+# Hide Wayland from JavaScript environment checks
+unset WAYLAND_DISPLAY
 export XDG_SESSION_TYPE=x11
 
-# Unset Wayland display to prevent Wayland detection
-unset WAYLAND_DISPLAY
-
-# Use X11 backend for Electron
-export ELECTRON_OZONE_PLATFORM_HINT=x11
-
-# Launch Upwork
-exec /opt/Upwork/upwork "$@"
+# Force Wayland via command line (overrides env vars for Electron internals)
+# This allows Electron to run on native Wayland while JS thinks it's X11
+exec /opt/Upwork/upwork \
+    --enable-features=WebRTCPipeWireCapturer,UseOzonePlatform \
+    --ozone-platform=wayland \
+    --wayland-display="$WAYLAND_SOCK" \
+    "$@"

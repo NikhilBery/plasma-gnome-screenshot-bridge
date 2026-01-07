@@ -271,42 +271,57 @@ sudo pacman -S grim         # Arch
 
 ### Application still shows "Wayland not supported"
 
-Some applications (like Upwork) explicitly check for Wayland and refuse to work even with the bridge running. These apps need to be launched under XWayland mode.
+Some applications (like Upwork) explicitly check for Wayland via multiple methods (environment variables, socket files, D-Bus queries, native code) and refuse to work even with the bridge running.
 
-**Solution: Use the included wrapper scripts**
+**Solution for Upwork: Patch + Wrapper**
 
-For Upwork specifically, we provide a wrapper script that forces XWayland mode:
+Upwork requires both a JavaScript patch (to use `spectacle` for screenshots) and a wrapper script (to hide Wayland detection):
 
 ```bash
 # Run the install script (automatically detects and sets up Upwork)
 ./contrib/install.sh
+
+# Then apply the patch (requires sudo for /opt/Upwork)
+patch-upwork install
 ```
 
-Or manually:
-```bash
-# Install the wrapper script
-cp contrib/upwork-wayland.sh ~/.local/bin/upwork-wayland
-chmod +x ~/.local/bin/upwork-wayland
+This installs:
+- `~/.local/bin/upwork-wayland` - Wrapper that runs Upwork on native Wayland
+- `~/.local/bin/patch-upwork` - Script to patch/restore Upwork's app.asar
+- Desktop entry override to use the wrapper
 
-# Install the desktop file (override system file)
+**Manual installation:**
+```bash
+# Install wrapper and patch scripts
+cp contrib/upwork-wayland.sh ~/.local/bin/upwork-wayland
+cp contrib/patch-upwork.sh ~/.local/bin/patch-upwork
+chmod +x ~/.local/bin/upwork-wayland ~/.local/bin/patch-upwork
+
+# Install desktop entry
 mkdir -p ~/.local/share/applications
 sed "s|Exec=upwork-wayland|Exec=$HOME/.local/bin/upwork-wayland|" \
     contrib/upwork.desktop > ~/.local/share/applications/upwork.desktop
+
+# Apply the patch
+patch-upwork install
 
 # Update desktop database
 update-desktop-database ~/.local/share/applications/
 kbuildsycoca6  # KDE only
 ```
 
-Now you can launch "Upwork" from your application menu, and it will automatically use XWayland mode with the screenshot bridge.
+**To restore original Upwork** (e.g., before updates):
+```bash
+patch-upwork restore
+```
 
-**For other Electron apps**, create a similar wrapper:
+**For other Electron apps** that don't need native screenshot support, a simple XWayland wrapper may work:
 ```bash
 #!/bin/bash
 export XDG_SESSION_TYPE=x11
 unset WAYLAND_DISPLAY
 export ELECTRON_OZONE_PLATFORM_HINT=x11
-exec /path/to/your/app "$@"
+exec /path/to/your/app --ozone-platform=x11 "$@"
 ```
 
 ## Credits

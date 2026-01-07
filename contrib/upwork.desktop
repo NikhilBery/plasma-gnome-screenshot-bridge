@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Upwork
-Comment=Upwork Desktop Application
+Comment=Upwork Desktop Application (Wayland patched)
 GenericName=Time Tracker
 Exec=upwork-wayland %U
 Icon=upwork

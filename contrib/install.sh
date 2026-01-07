@@ -75,9 +75,17 @@ fi
 
 # Install Upwork wrapper (optional)
 if [ -f /opt/Upwork/upwork ]; then
-    echo "Upwork detected. Installing Wayland wrapper..."
+    echo "Upwork detected. Installing Wayland support..."
+
+    # Install wrapper script
     cp "$SCRIPT_DIR/upwork-wayland.sh" ~/.local/bin/upwork-wayland
     chmod +x ~/.local/bin/upwork-wayland
+    echo "  ✓ Wrapper script installed"
+
+    # Install patch script
+    cp "$SCRIPT_DIR/patch-upwork.sh" ~/.local/bin/patch-upwork
+    chmod +x ~/.local/bin/patch-upwork
+    echo "  ✓ Patch script installed"
 
     # Install desktop file override with full path
     mkdir -p ~/.local/share/applications
@@ -87,8 +95,14 @@ if [ -f /opt/Upwork/upwork ]; then
     # Rebuild desktop database
     update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
     kbuildsycoca6 2>/dev/null || true
+    echo "  ✓ Desktop entry installed"
 
-    echo "  ✓ Upwork wrapper installed"
+    echo
+    echo "  NOTE: You need to patch Upwork for screenshots to work:"
+    echo "        patch-upwork install"
+    echo
+    echo "  To restore original Upwork:"
+    echo "        patch-upwork restore"
 fi
 
 echo
@@ -107,5 +121,6 @@ echo "To run manually:"
 echo "  plasma-gnome-screenshot-bridge -v"
 echo
 if [ -f /opt/Upwork/upwork ]; then
-    echo "Upwork: Launch from application menu - it will use XWayland mode automatically."
+    echo "Upwork: Run 'patch-upwork install' to enable Wayland screenshots,"
+    echo "        then launch from application menu."
 fi
