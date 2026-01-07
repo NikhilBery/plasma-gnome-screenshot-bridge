@@ -15,15 +15,13 @@ Adapted for KDE Plasma with multi-backend support.
 
 import argparse
 import asyncio
-import datetime as dt
+from datetime import datetime, timezone
 import logging
-import os
 import shutil
 import signal
 import subprocess
 import sys
-from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method
@@ -240,7 +238,7 @@ class IdleMonitorInterface(ServiceInterface):
 
     def __init__(self):
         super().__init__("org.gnome.Mutter.IdleMonitor")
-        self.last_active = dt.datetime.utcnow()
+        self.last_active = datetime.now(timezone.utc)
         self._monitor_process: Optional[asyncio.subprocess.Process] = None
         self._monitor_task: Optional[asyncio.Task] = None
 
@@ -271,7 +269,7 @@ class IdleMonitorInterface(ServiceInterface):
         try:
             async for line in self._monitor_process.stdout:
                 if line.decode().strip() == "resume":
-                    self.last_active = dt.datetime.utcnow()
+                    self.last_active = datetime.now(timezone.utc)
         except Exception as e:
             logger.debug(f"Idle monitor loop error: {e}")
 
@@ -288,7 +286,7 @@ class IdleMonitorInterface(ServiceInterface):
 
     @method()
     def GetIdletime(self) -> 't':
-        delta = dt.datetime.utcnow() - self.last_active
+        delta = datetime.now(timezone.utc) - self.last_active
         idle_ms = round(delta.total_seconds() * 1000)
         logger.debug(f"Idle time: {idle_ms}ms")
         return idle_ms
